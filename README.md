@@ -1,3 +1,13 @@
+Create a Stablecoin that can be used for the Catalan Republic and the rest of the world
+
+1. Pegged or anchored to Bitcoin?Gold?Eur?
+    1. Use chainlink feed to get the price
+2. Stability Mechanisim (miniting) Algorithmic (Decentralized)
+    2. People can only mint with enough collateral
+3. Collateral: Exogenous -> we will use bitcoin and etherum as collateral
+    1. wETH and wBTC
+
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
