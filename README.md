@@ -1,4 +1,4 @@
-Create a Stablecoin that can be used for the Catalan Republic and the rest of the world
+Create a Stablecoin that can be used for the "Ficticious never will happen Catalan Republic" and the rest of the world
 
 1. Pegged or anchored to Bitcoin?Gold?Eur?
     1. Use chainlink feed to get the price
