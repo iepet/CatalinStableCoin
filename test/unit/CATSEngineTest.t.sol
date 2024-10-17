@@ -24,6 +24,14 @@ contract CATSEngineTest is Test {
     uint256 public constant AMOUNT_COLLATERAL = 10 ether;
     uint256 public constant STARTING_ERC20_BALANCE = 10 ether;
 
+    modifier depositedCollateral(){
+       vm.startPrank(USER);
+       ERC20Mock(weth).approve(address(engine), AMOUNT_COLLATERAL);
+       engine.depositCollateral(weth, AMOUNT_COLLATERAL);
+       vm.stopPrank();
+       _;
+    }
+
 
     function setUp()  public {
         deployCAT = new DeployCAT();
@@ -59,7 +67,13 @@ contract CATSEngineTest is Test {
         assertEq(expectedUsd, actualUsd);
     }
 
-    function testGetTokenAmountInGoldGram () public{
+    function testGetTokenAmountFromGoldGram () public{
+        uint256 goldAmount = 100 ether;
+        //If i have 100 gold grams, and 2000 gold grams 1 eth, then i should have 0.05 eth
+        uint256 expectedWeth = 0.05 ether;
+
+        uint256 actualWeth = engine.getTokenAmountFromGoldGrams(weth, goldAmount);
+        assertEq(expectedWeth, actualWeth);
 
     }
 
@@ -71,6 +85,21 @@ contract CATSEngineTest is Test {
         vm.expectRevert(CATSEngine.CATSEngine__MustBeGreaterThanZero.selector);
         engine.depositCollateral(weth, 0);
         vm.stopPrank();
+    }
+
+    function testRevertsWithUnapprovedCollateral() public {
+        ERC20Mock randToken = new ERC20Mock("RAN", "RAN", USER, 100e18);
+        vm.startPrank(USER);
+        vm.expectRevert(abi.encodeWithSelector(CATSEngine.CATSEngine__NotAllowedToken.selector, address(randToken)));
+        engine.depositCollateral(address(randToken), AMOUNT_COLLATERAL);
+        vm.stopPrank();
+    }
+
+    function testCanDepositedCollateralAndGetAccountInfo() public depositedCollateral {
+        (uint256 totalDscMinted, uint256 collateralValueInGold) = engine.getAccountInformation(USER);
+        uint256 expectedDepositedAmount = engine.getTokenAmountFromGoldGrams(weth, collateralValueInGold);
+        assertEq(totalDscMinted, 0);
+        assertEq(expectedDepositedAmount, AMOUNT_COLLATERAL);
     }
 
     

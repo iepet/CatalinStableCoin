@@ -284,7 +284,7 @@ contract CATSEngine is ReentrancyGuard {
 
     ///////////// Public and External View Functions /////////////
 
-    function getTokenAmountFromGoldGrams(address token, uint256  GoldGramAmountInWe)
+    function getTokenAmountFromGoldGrams(address token, uint256  GoldGramAmountInWei)
     public
     view
     returns (uint256){
@@ -294,7 +294,7 @@ contract CATSEngine is ReentrancyGuard {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(s_priceFeeds[token]);
         (, int256 price, , , ) = priceFeed.latestRoundData();
         // (1000$e18*1e18)/($2000e8*1e10) 
-        return (GoldGramAmountInWe*PRECISION)/uint256(price)*ADDITIONAL_FEED_PRECISION;
+        return ((GoldGramAmountInWei*PRECISION)/(uint256(price)*ADDITIONAL_FEED_PRECISION));
         
     }
 
@@ -316,6 +316,10 @@ contract CATSEngine is ReentrancyGuard {
         //1ETH = $1000
         //The Returned value from CL will be 1000*1e8
         return (uint256(price)* ADDITIONAL_FEED_PRECISION )* amount / PRECISION; // (1000 * 1e8 * 1e10)= 1000 * 1e18 and all divided by 1e18
+    }
+
+    function getAccountInformation(address user) external view returns(uint256 totalCatMinted, uint256 collateralValueInUsd){
+        (totalCatMinted,collateralValueInUsd)= _getAccountInformation(user);
     }
 
 }
